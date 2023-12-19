@@ -1,5 +1,5 @@
 # Online-shop-for-clothes
-Features : 
+## :ledger: Features : 
 - Gender: Man-Woman
 - Season: Summer-Winter
 - Types:
