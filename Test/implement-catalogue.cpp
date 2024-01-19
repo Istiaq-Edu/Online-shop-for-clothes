@@ -44,65 +44,104 @@ class Catalog
 {
 private:
     static const int MAX_ITEMS = 100;
-    CatalogItem items[MAX_ITEMS];
-    int numItems = 0;
+    CatalogItem summerItems[MAX_ITEMS];
+    CatalogItem winterItems[MAX_ITEMS];
+    int numSummerItems = 0;
+    int numWinterItems = 0;
 
 public:
-    void addItem(string itemName, double price)
+    void addSummerItem(string itemName, double price)
     {
-        if (numItems < MAX_ITEMS)
+        if (numSummerItems < MAX_ITEMS)
         {
-            items[numItems++] = CatalogItem(itemName, price);
-            cout << itemName << " Added to the catalog.\n";
+            summerItems[numSummerItems++] = CatalogItem(itemName, price);
+            cout << itemName << " added to the summer catalog.\n";
         }
         else
         {
-            cout << "Catalog is full. Cannot add more items.\n";
+            cout << "Summer catalog is full. Cannot add more items.\n";
         }
     }
 
-    void removeItem(string itemName)
+    void addWinterItem(string itemName, double price)
     {
-        for (int i = 0; i < numItems; ++i)
+        if (numWinterItems < MAX_ITEMS)
         {
-            if (items[i].itemName == itemName)
+            winterItems[numWinterItems++] = CatalogItem(itemName, price);
+            cout << itemName << " added to the winter catalog.\n";
+        }
+        else
+        {
+            cout << "Winter catalog is full. Cannot add more items.\n";
+        }
+    }
+
+    void removeSummerItem(string itemName)
+    {
+        for (int i = 0; i < numSummerItems; ++i)
+        {
+            if (summerItems[i].itemName == itemName)
             {
-                for (int j = i; j < numItems - 1; ++j)
+                for (int j = i; j < numSummerItems - 1; ++j)
                 {
-                    items[j] = items[j + 1];
+                    summerItems[j] = summerItems[j + 1];
                 }
-                numItems--;
-                cout << itemName << " Removed from the catalog.\n";
+                numSummerItems--;
+                cout << itemName << " removed from the summer catalog.\n";
                 return;
             }
         }
-        cout << "Item not found in the catalog.\n";
+        cout << "Item not found in the summer catalog.\n";
     }
 
-    void viewCatalog()
+    void removeWinterItem(string itemName)
     {
-        if (numItems == 0)
+        for (int i = 0; i < numWinterItems; ++i)
         {
-            cout << "The catalog is empty.\n";
+            if (winterItems[i].itemName == itemName)
+            {
+                for (int j = i; j < numWinterItems - 1; ++j)
+                {
+                    winterItems[j] = winterItems[j + 1];
+                }
+                numWinterItems--;
+                cout << itemName << " removed from the winter catalog.\n";
+                return;
+            }
+        }
+        cout << "Item not found in the winter catalog.\n";
+    }
+
+    void viewSummerCatalog()
+    {
+        if (numSummerItems == 0)
+        {
+            cout << "The summer catalog is empty.\n";
         }
         else
         {
-            cout << "Items in the catalog:\n";
-            for (int i = 0; i < numItems; ++i)
+            cout << "Items in the summer catalog:\n";
+            for (int i = 0; i < numSummerItems; ++i)
             {
-                cout << items[i].itemName << " - TK" << items[i].price << "\n";
+                cout << summerItems[i].itemName << " - " << summerItems[i].price << "-BTD\n";
             }
         }
     }
 
-    const CatalogItem *getItems() const
+    void viewWinterCatalog()
     {
-        return items;
-    }
-
-    int getNumItems() const
-    {
-        return numItems;
+        if (numWinterItems == 0)
+        {
+            cout << "The winter catalog is empty.\n";
+        }
+        else
+        {
+            cout << "Items in the winter catalog:\n";
+            for (int i = 0; i < numWinterItems; ++i)
+            {
+                cout << winterItems[i].itemName << " - " << winterItems[i].price << "-BTD\n";
+            }
+        }
     }
 };
 
@@ -138,7 +177,7 @@ public:
         }
         else
         {
-            cout << "Invalid admin credentials.\n";
+            cout << "Invalid admin credentials\n";
             return false;
         }
     }
@@ -164,6 +203,7 @@ public:
         }
     }
 };
+
 void adminMenu(SignupLogin &auth, Catalog &catalog)
 {
     int choice;
@@ -171,45 +211,74 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
     while (1)
     {
         cout << "\nAdmin Menu:\n";
-        cout << "1. View Catalog\n";
-        cout << "2. Add Item to Catalog\n";
-        cout << "3. Remove Item from Catalog\n";
-        cout << "4. Logout\n\n";
+        cout << "1. View Summer Catalog\n";
+        cout << "2. Add Item to Summer Catalog\n";
+        cout << "3. Remove Item from Summer Catalog\n";
+        cout << "4. View Winter Catalog\n";
+        cout << "5. Add Item to Winter Catalog\n";
+        cout << "6. Remove Item from Winter Catalog\n";
+        cout << "7. Logout\n\n";
 
         cout << "Enter your choice: ";
         cin >> choice;
 
+        cin.ignore(); // Consume the newline character left in the input buffer
+
         switch (choice)
         {
         case 1:
-            catalog.viewCatalog();
+            catalog.viewSummerCatalog();
             break;
         case 2:
         {
             string itemName;
             double price;
-            cout << "Enter the item name to add to the catalog: ";
-            cin >> itemName;
+            cout << "Enter the item name to add to the summer catalog: ";
+            getline(cin,itemName);
             cout << "Enter the price of the item: ";
             cin >> price;
-            catalog.addItem(itemName, price);
+            catalog.addSummerItem(itemName, price);
             break;
         }
         case 3:
         {
             string itemName;
-            cout << "Enter the item name to remove from the catalog: ";
-            cin >> itemName;
-            catalog.removeItem(itemName);
+            cout << "Enter the item name to remove from the summer catalog: ";
+            getline(cin, itemName);
+            catalog.removeSummerItem(itemName);
             break;
         }
         case 4:
+            catalog.viewWinterCatalog();
+            break;
+        case 5:
+        {
+            string itemName;
+            double price;
+            cout << "Enter the item name to add to the winter catalog: ";
+            getline(cin, itemName);
+            cout << "Enter the price of the item: ";
+            cin >> price;
+            catalog.addWinterItem(itemName, price);
+            break;
+        }
+        case 6:
+        {
+            string itemName;
+            cout << "Enter the item name to remove from the winter catalog: ";
+            getline(cin, itemName);
+            catalog.removeWinterItem(itemName);
+            break;
+        }
+        case 7:
             return;
         default:
-            cout << "Invalid choice.\n";
+            cout << "Invalid choice\n";
         }
     }
 }
+
+
 int main()
 {
     SignupLogin auth;
@@ -224,7 +293,8 @@ int main()
 
     if (userType == 1)
     {
-        cout << "will be included later on\n";
+
+        cout << "Will add it letter.\n";
     }
     else if (userType == 2)
     {
