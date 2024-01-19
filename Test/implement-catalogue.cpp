@@ -1,158 +1,245 @@
 #include <iostream>
 #include <string>
+
 using namespace std;
 
-class Catalogue
+class CatalogItem
 {
+public:
+    string itemName;
+    double price;
+    CatalogItem() : price(0.0) {}
+    CatalogItem(string name, double p) : itemName(name), price(p) {}
+};
+
+class Admin
+{
+private:
+    string username;
+    string password;
+    bool isAdminSet;
 
 public:
+    Admin() : isAdminSet(false) {}
 
-    void menu()
+    void setAdminCredentials(string uname, string pwd)
     {
-        int choice;
-        while(true)
+        username = uname;
+        password = pwd;
+        isAdminSet = true;
+    }
+
+    bool isAdminSetFlag() const
+    {
+        return isAdminSet;
+    }
+
+    bool login(string user, string pass)
+    {
+        return (isAdminSet && user == username && pass == password);
+    }
+};
+
+class Catalog
+{
+private:
+    static const int MAX_ITEMS = 100;
+    CatalogItem items[MAX_ITEMS];
+    int numItems = 0;
+
+public:
+    void addItem(string itemName, double price)
+    {
+        if (numItems < MAX_ITEMS)
         {
-            cout<<"0. <-- Go back <-- \n";
-            cout<<"1. Please Select your Gender.\n";
-            cout<<"2. Please Select the Season you want to shop for.\n";
-            cout<<"3. Please Select the Body-part you want to shop for.\n";
-            cout<<"4. Please Select the Item you want to buy.\n";
-            cout<<"5. Please Select a size of the Item you want to buy.\n";
-            cout<<"6. Please Enter a Quantity of the item you want to buy.\n";
-            cout<<"7. Add to cart.\n";
-            cout<<"8. View cart.\n";
-            cout<<"9. Remove from cart.\n";
-            cout<<"10. Please confirm your order.\n";
-            cout<<"11. View your Order.\n";
-            cout<<"99. To Exit.\n";
+            items[numItems++] = CatalogItem(itemName, price);
+            cout << itemName << " Added to the catalog.\n";
+        }
+        else
+        {
+            cout << "Catalog is full. Cannot add more items.\n";
+        }
+    }
 
-            cin>>choice;
-
-            switch(choice)
+    void removeItem(string itemName)
+    {
+        for (int i = 0; i < numItems; ++i)
+        {
+            if (items[i].itemName == itemName)
             {
-            case 0:
-                GoBack();
-                break;
+                for (int j = i; j < numItems - 1; ++j)
+                {
+                    items[j] = items[j + 1];
+                }
+                numItems--;
+                cout << itemName << " Removed from the catalog.\n";
+                return;
+            }
+        }
+        cout << "Item not found in the catalog.\n";
+    }
 
-            case 1:
-                SelectGender();
-                break;
-
-            case 2:
-                SelectSeason();
-                break;
-
-            case 3:
-                SelectBodyPart();
-                break;
-
-            case 4:
-                SelectItem();
-                break;
-
-            case 5:
-                SelectSize();
-                break;
-
-            case 6:
-                EnterQuantity();
-                break;
-
-            case 7:
-                AddToCart();
-                break;
-
-            case 8:
-                ViewCart();
-                break;
-
-            case 9:
-                RemoveCart();
-                break;
-
-            case 10:
-                ConfirmOrder();
-                break;
-
-            case 11:
-                ViewOrder();
-                break;
-
-            default:
-                exit(0);
+    void viewCatalog()
+    {
+        if (numItems == 0)
+        {
+            cout << "The catalog is empty.\n";
+        }
+        else
+        {
+            cout << "Items in the catalog:\n";
+            for (int i = 0; i < numItems; ++i)
+            {
+                cout << items[i].itemName << " - TK" << items[i].price << "\n";
             }
         }
     }
 
-    void GoBack()
+    const CatalogItem *getItems() const
     {
-
+        return items;
     }
 
-    void SelectGender()
+    int getNumItems() const
     {
-
+        return numItems;
     }
-
-    void SelectSeason()
-    {
-
-    }
-
-    void SelectBodyPart()
-    {
-
-
-    void SelectItem()
-    {
-
-    }
-
-    void SelectSize()
-    {
-
-    }
-
-    void EnterQuantity()
-    {
-
-    }
-
-    void AddToCart()
-    {
-
-    }
-
-    void ViewCart()
-    {
-
-    }
-
-    void RemoveCart()
-    {
-
-    }
-
-    void ConfirmOrder()
-    {
-
-    }
-
-    void ViewOrder()
-    {
-
-    }
-
-private:
-
 };
 
+class SignupLogin
+{
+private:
+    static const int MAX_USERS = 100;
+    string users[MAX_USERS][2];
+    int numUsers = 0;
+    Admin admin;
 
+public:
+    bool adminLogin()
+    {
+        if (!admin.isAdminSetFlag())
+        {
+            cout << "Admin credentials not set. Please set admin credentials first.\n";
+            return false;
+        }
+
+        string adminUsername, adminPassword;
+
+        cout << "Enter admin username: ";
+        cin >> adminUsername;
+
+        cout << "Enter admin password: ";
+        cin >> adminPassword;
+
+        if (admin.login(adminUsername, adminPassword))
+        {
+            cout << "ADMIN LOGIN SUCCESSFUL!\n";
+            return true;
+        }
+        else
+        {
+            cout << "Invalid admin credentials.\n";
+            return false;
+        }
+    }
+
+    void setAdminCredentials()
+    {
+        if (!admin.isAdminSetFlag())
+        {
+            string adminUsername, adminPassword;
+
+            cout << "Set admin username: ";
+            cin >> adminUsername;
+
+            cout << "Set admin password: ";
+            cin >> adminPassword;
+
+            admin.setAdminCredentials(adminUsername, adminPassword);
+            cout << "Admin credentials set successfully!\n";
+        }
+        else
+        {
+            cout << "Admin credentials already set.\n";
+        }
+    }
+};
+void adminMenu(SignupLogin &auth, Catalog &catalog)
+{
+    int choice;
+
+    while (1)
+    {
+        cout << "\nAdmin Menu:\n";
+        cout << "1. View Catalog\n";
+        cout << "2. Add Item to Catalog\n";
+        cout << "3. Remove Item from Catalog\n";
+        cout << "4. Logout\n\n";
+
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            catalog.viewCatalog();
+            break;
+        case 2:
+        {
+            string itemName;
+            double price;
+            cout << "Enter the item name to add to the catalog: ";
+            cin >> itemName;
+            cout << "Enter the price of the item: ";
+            cin >> price;
+            catalog.addItem(itemName, price);
+            break;
+        }
+        case 3:
+        {
+            string itemName;
+            cout << "Enter the item name to remove from the catalog: ";
+            cin >> itemName;
+            catalog.removeItem(itemName);
+            break;
+        }
+        case 4:
+            return;
+        default:
+            cout << "Invalid choice.\n";
+        }
+    }
+}
 int main()
 {
+    SignupLogin auth;
+    Catalog catalog;
 
-    Catalogue c;
-    c.menu();
+    int userType;
+    cout << "Select user type:\n";
+    cout << "1. Customer\n";
+    cout << "2. Admin\n";
+    cout << "Enter your choice: ";
+    cin >> userType;
+
+    if (userType == 1)
+    {
+        cout << "will be included later on\n";
+    }
+    else if (userType == 2)
+    {
+        auth.setAdminCredentials();
+
+        while (!auth.adminLogin())
+        {
+            cout << "Invalid credentials. Please try again.\n";
+        }
+        adminMenu(auth, catalog);
+    }
+    else
+    {
+        cout << "Invalid user type\n";
+    }
 
     return 0;
 }
