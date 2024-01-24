@@ -49,6 +49,7 @@ private:
     int numSummerItems = 0;
     int numWinterItems = 0;
 
+
 public:
     void addSummerItem(string itemName, double price)
     {
@@ -145,6 +146,111 @@ public:
     }
 };
 
+class CustomerCatalog
+{
+private:
+    static const int MAX_CART_ITEMS = 20;
+    string customerCart[MAX_CART_ITEMS];
+    double cartTotal = 0.0;
+    int numItemsInCart = 0;
+
+public:
+    void viewSummerCatalog(const Catalog& catalog)
+    {
+        catalog.viewSummerCatalog();
+    }
+
+    void viewWinterCatalog(const Catalog& catalog)
+    {
+       catalog.viewWinterCatalog();
+    }
+
+    void addToCart(const CatalogItem& item)
+    {
+        if (item.itemName.empty())
+        {
+            cout << "Item not found in the catalog.\n";
+            return;
+        }
+        if (numItemsInCart < MAX_CART_ITEMS)
+        {
+            customerCart[numItemsInCart++] = item.itemName;
+            cartTotal += item.price;
+            cout << item.itemName << " added to your cart.\n";
+        }
+        else
+        {
+            cout << "Your cart is full. Cannot add more items.\n";
+        }
+    }
+
+    void viewCart()
+    {
+        if (numItemsInCart == 0)
+        {
+            cout << "Your cart is empty.\n";
+        }
+        else
+        {
+            cout << "Items in your cart:\n";
+            for (int i = 0; i < numItemsInCart; ++i)
+            {
+                cout << i + 1 << ". " << customerCart[i] << "\n";
+            }
+            cout << "Total: " << cartTotal << "-BTD\n";
+        }
+    }
+
+    void makePayment(int paymentOption)
+    {
+        if (numItemsInCart == 0)
+        {
+            cout << "Your cart is empty. Cannot proceed to payment.\n";
+            return;
+        }
+
+        switch (paymentOption)
+        {
+        case 1:
+            cout << "Payment successful! Paid with card.\n";
+            break;
+        case 2:
+            cout << "Payment successful! Paid with cash.\n";
+            break;
+        default:
+            cout << "Invalid payment option\n";
+            return;
+        }
+
+        generateReceipt();
+        clearCart();
+    }
+
+private:
+    void generateReceipt()
+    {
+        cout << "Receipt:\n";
+        cout << "-----------------------------------------\n";
+        for (int i = 0; i < numItemsInCart; ++i)
+        {
+            cout << customerCart[i] << " - " << getItemPrice(customerCart[i]) << "-BTD\n";
+        }
+        cout << "Total: " << cartTotal << "-BTD\n";
+        cout << "-----------------------------------------\n";
+    }
+
+    double getItemPrice(const string& itemName)
+    {
+
+    }
+
+    void clearCart()
+    {
+        numItemsInCart = 0;
+        cartTotal = 0.0;
+    }
+};
+
 class SignupLogin
 {
 private:
@@ -202,7 +308,146 @@ public:
             cout << "Admin credentials already set.\n";
         }
     }
+
+
+
+    void customerSignup()
+    {
+        string username, password;
+
+        cout << "Enter username: ";
+        cin >> username;
+
+        bool usernameExists = false;
+        for (int i = 0; i < numUsers; i++)
+        {
+            if (users[i][0] == username)
+            {
+                usernameExists = true;
+                break;
+            }
+        }
+
+        if (usernameExists)
+        {
+            cout << "Username already exists!\n";
+            return;
+        }
+
+        cout << "Enter password: ";
+        cin >> password;
+
+        if (password.length() < 8)
+        {
+            cout << "Password too short!\n";
+            return;
+        }
+
+        users[numUsers][0] = username;
+        users[numUsers][1] = password;
+        numUsers++;
+
+        cout << "Account created!\n\n";
+    }
+    bool customerLogin()
+    {
+        string username, password;
+
+        cout << "Enter username: ";
+        cin >> username;
+
+        cout << "Enter password: ";
+        cin >> password;
+
+        bool credentialsValid = false;
+        for (int i = 0; i < numUsers; i++)
+        {
+            if (users[i][0] == username && users[i][1] == password)
+            {
+                credentialsValid = true;
+                cout << "\nWelcome " << username << "!\n";
+                break;
+            }
+        }
+
+        if (!credentialsValid)
+        {
+            cout << "\nInvalid credentials\n";
+        }
+
+        return credentialsValid;
+    }
+
+    void customerForgotPassword()
+    {
+        string username;
+        cout << "Enter your username: ";
+        cin >> username;
+
+        bool usernameFound = false;
+        for (int i = 0; i < numUsers; i++)
+        {
+            if (users[i][0] == username)
+            {
+                usernameFound = true;
+                break;
+            }
+        }
+
+        if (!usernameFound)
+        {
+            cout << "Username not found!\n";
+            return;
+        }
+
+        string newPassword;
+        cout << "Enter new password: ";
+        cin >> newPassword;
+
+        if (newPassword.length() < 8)
+        {
+            cout << "Password too short!\n";
+            return;
+        }
+
+        for (int i = 0; i < newPassword.length(); i++)
+        {
+            newPassword[i] += 1;
+        }
+
+        for (int i = 0; i < numUsers; i++)
+        {
+            if (users[i][0] == username)
+            {
+                users[i][1] = newPassword;
+                break;
+            }
+        }
+
+        cout << "Password changed successfully!\n";
+    }
 };
+
+CatalogItem findItemInCatalog(string itemName, Catalog& catalog)
+{
+    for (int i = 0; i < catalog.numSummerItems; ++i)
+    {
+        if (catalog.summerItems[i].itemName == itemName)
+        {
+            return catalog.summerItems[i];
+        }
+    }
+
+    for (int i = 0; i < catalog.numWinterItems; ++i)
+    {
+        if (catalog.winterItems[i].itemName == itemName)
+        {
+            return catalog.winterItems[i];
+        }
+    }
+
+    return CatalogItem();
+}
 
 void adminMenu(SignupLogin &auth, Catalog &catalog)
 {
@@ -222,7 +467,7 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
         cout << "Enter your choice: ";
         cin >> choice;
 
-        cin.ignore(); // Consume the newline character left in the input buffer
+        cin.ignore();
 
         switch (choice)
         {
@@ -278,7 +523,6 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
     }
 }
 
-
 int main()
 {
     SignupLogin auth;
@@ -293,8 +537,103 @@ int main()
 
     if (userType == 1)
     {
+        int customerChoice;
 
-        cout << "Will add it letter.\n";
+        while (1)
+        {
+            cout << "\nCustomer Menu:\n";
+            cout << "1. Signup\n";
+            cout << "2. Login\n";
+            cout << "3. Forgot Password\n";
+            cout << "4. Exit\n\n";
+
+            cout << "Enter your choice: ";
+            cin >> customerChoice;
+
+            switch (customerChoice)
+            {
+            case 1:
+                auth.customerSignup();
+                break;
+            case 2:
+                if (auth.customerLogin())
+                {
+                    CustomerCatalog customerCatalog;
+
+                    int customerCategory;
+
+                    cout << "Choose a category:\n";
+                    cout << "1. Summer Items\n";
+                    cout << "2. Winter Items\n";
+                    cout << "Enter your choice: ";
+                    cin >> customerCategory;
+
+                    switch (customerCategory)
+                    {
+                    case 1:
+                        customerCatalog.viewSummerCatalog(catalog);
+                        break;
+                    case 2:
+                        customerCatalog.viewWinterCatalog(catalog);
+                        break;
+                    default:
+                        cout << "Invalid category choice\n";
+                        return 0;
+                    }
+                    int cartAction;
+                    cout << "Choose an action:\n";
+                    cout << "1. Add to Cart\n";
+                    cout << "2. View Cart\n";
+                    cout << "3. Make Payment\n";
+                    cout << "4. Back to Main Menu\n";
+                    cout << "Enter your choice: ";
+                    cin >> cartAction;
+                    CatalogItem item;
+                    string itemName;
+
+                    switch (cartAction)
+                    {
+                    case 1:
+                        
+                        string itemName;
+                        cout << "Enter the item name to add to the cart: ";
+                        cin.ignore(); 
+                        getline(cin, itemName);
+                        CatalogItem item = findItemInCatalog(itemName, catalog);
+                        if (item.itemName != "")
+                            customerCatalog.addToCart(item);
+                        break;
+                    case 2:
+                        
+                        customerCatalog.viewCart();
+                        break;
+                    case 3:
+                       
+                        int paymentOption;
+                        cout << "Choose a payment option:\n";
+                        cout << "1. Card\n";
+                        cout << "2. Cash\n";
+                        cout << "Enter your choice: ";
+                        cin >> paymentOption;
+                        customerCatalog.makePayment(paymentOption);
+                        break;
+                    case 4:
+                        
+                        return 0;
+                    default:
+                        cout << "Invalid choice\n";
+                    }
+                }
+                break;
+            case 3:
+                auth.customerForgotPassword();
+                break;
+            case 4:
+                return 0;
+            default:
+                cout << "Invalid choice\n";
+            }
+        }
     }
     else if (userType == 2)
     {
