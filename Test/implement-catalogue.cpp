@@ -8,14 +8,20 @@ class CatalogItem
 public:
     string itemName;
     double price;
+    string Size;
+    string code;
+    string color;
     CatalogItem()
     {
         price = 0.0;
     }
-    CatalogItem(string name, double p)
+    CatalogItem(string name, double p, string sz, string cd, string clr)
     {
         itemName = name;
         price = p;
+        Size = sz;
+        code = cd;
+        color = clr;
     }
 };
 
@@ -61,11 +67,11 @@ private:
 
 
 public:
-    void addSummerItem(string itemName, double price)
+    void addSummerItem(string itemName, double price, string Size, string code, string color)
     {
         if (numSummerItems < MAX_ITEMS)
         {
-            summerItems[numSummerItems++] = CatalogItem(itemName, price);
+            summerItems[numSummerItems++] = CatalogItem(itemName, price, Size, code, color);
             cout << itemName << " added to the summer catalog.\n";
         }
         else
@@ -74,11 +80,11 @@ public:
         }
     }
 
-    void addWinterItem(string itemName, double price)
+    void addWinterItem(string itemName, double price, string size, string code, string color)
     {
         if (numWinterItems < MAX_ITEMS)
         {
-            winterItems[numWinterItems++] = CatalogItem(itemName, price);
+            winterItems[numWinterItems++] = CatalogItem(itemName, price, size, code, color);
             cout << itemName << " added to the winter catalog.\n";
         }
         else
@@ -131,10 +137,17 @@ public:
         }
         else
         {
-            cout << "Items in the summer catalog:\n";
+            cout << "********************************************************************************************************\n";
+            cout << "Items in the summer catalog:\n\n";
             for (int i = 0; i < numSummerItems; ++i)
             {
-                cout << summerItems[i].itemName << " - " << summerItems[i].price << "-BTD\n";
+                cout << "Code: " << summerItems[i].code<< " | ";
+                cout << "Name: " << summerItems[i].itemName<< " | ";
+                cout << "Size: " << summerItems[i].Size<< " | ";
+                cout << "Color: " << summerItems[i].color<< " | ";
+                cout << "Price: " << summerItems[i].price<< "-BTD | ";
+                cout << "\n\n";
+                cout << "********************************************************************************************************\n";
             }
         }
     }
@@ -147,10 +160,17 @@ public:
         }
         else
         {
-            cout << "Items in the winter catalog:\n";
+            cout << "********************************************************************************************************\n";
+            cout << "Items in the winter catalog:\n\n";
             for (int i = 0; i < numWinterItems; ++i)
             {
-                cout << winterItems[i].itemName << " - " << winterItems[i].price << "-BTD\n";
+                cout << "Code: " << winterItems[i].code << " | ";
+                cout << "Name: " << winterItems[i].itemName << " | ";
+                cout << "Size: " << winterItems[i].Size << " | ";
+                cout << "Color: " << winterItems[i].color << " | ";
+                cout << "Price: " << winterItems[i].price << "-BTD | ";
+                cout << "\n\n";
+                cout << "********************************************************************************************************\n";
             }
         }
     }
@@ -348,7 +368,7 @@ public:
         cout << "Enter password: ";
         cin >> password;
 
-        if (password.length() < 8)
+        if (password.length() < 1)
         {
             cout << "Password too short!\n";
             return;
@@ -466,6 +486,7 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
 
     while (1)
     {
+        cout << "********************************************************************************************************\n";
         cout << "\nAdmin Menu:\n";
         cout << "1. View Summer Catalog\n";
         cout << "2. Add Item to Summer Catalog\n";
@@ -473,7 +494,9 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
         cout << "4. View Winter Catalog\n";
         cout << "5. Add Item to Winter Catalog\n";
         cout << "6. Remove Item from Winter Catalog\n";
-        cout << "7. Logout\n\n";
+        cout << "7. Logout\n";
+        cout << "8. Exit\n\n";
+        cout << "********************************************************************************************************\n";
 
         cout << "Enter your choice: ";
         cin >> choice;
@@ -487,13 +510,19 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
             break;
         case 2:
         {
-            string itemName;
+            string itemName, size, code, color;
             double price;
             cout << "Enter the item name to add to the summer catalog: ";
-            getline(cin,itemName);
+            getline(cin, itemName);
             cout << "Enter the price of the item: ";
             cin >> price;
-            catalog.addSummerItem(itemName, price);
+            cout << "Enter the size of the item: ";
+            cin >> size;
+            cout << "Enter the code of the item: ";
+            cin >> code;
+            cout << "Enter the color of the item: ";
+            cin >> color;
+            catalog.addSummerItem(itemName, price, size, code, color);
             break;
         }
         case 3:
@@ -509,13 +538,19 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
             break;
         case 5:
         {
-            string itemName;
+            string itemName, size, code, color;
             double price;
             cout << "Enter the item name to add to the winter catalog: ";
             getline(cin, itemName);
             cout << "Enter the price of the item: ";
             cin >> price;
-            catalog.addWinterItem(itemName, price);
+            cout << "Enter the size of the item: ";
+            cin >> size;
+            cout << "Enter the code of the item: ";
+            cin >> code;
+            cout << "Enter the color of the item: ";
+            cin >> color;
+            catalog.addWinterItem(itemName, price, size, code, color);
             break;
         }
         case 6:
@@ -528,6 +563,8 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
         }
         case 7:
             return;
+        case 8:
+            exit(0);
         default:
             cout << "Invalid choice\n";
         }
@@ -541,27 +578,36 @@ int main()
 
     while (true)
     {
-
         int userType;
+
+        cout << " __        __   _                            _          _   _                _                 \n";
+        cout << " \\ \\      / /__| | ___ ___  _ __ ___   ___  | |_ ___   | |_| |__   ___   ___| |__   ___  _ __  \n";
+        cout << "  \\ \\ /\\ / / _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ | __/ _ \\  | __| '_ \\ / _ \\ / __| '_ \\ / _ \\| '_ \\ \n";
+        cout << "   \\ V  V /  __/ | (_| (_) | | | | | |  __/ | || (_) | | |_| | | |  __/ \\__ \\ | | | (_) | |_) |\n";
+        cout << "    \\_/\\_/ \\___|_|\\___\\___/|_| |_| |_|\\___|  \\__\\___/   \\__|_| |_|\\___| |___/_| |_|\\___/| .__/ \n";
+        cout << "                                                                                        |_|     \n";
+
+        cout << "********************************************************************************************************\n";
         cout << "Select user type:\n";
         cout << "1. Customer\n";
         cout << "2. Admin\n";
         cout << "3. Exit\n";
+        cout << "********************************************************************************************************\n";
         cout << "Enter your choice: ";
         cin >> userType;
 
         if (userType == 1)
         {
             int customerChoice;
-
-            while (1)
+            do
             {
+                cout << "********************************************************************************************************\n";
                 cout << "\nCustomer Menu:\n";
                 cout << "1. Signup\n";
                 cout << "2. Login\n";
                 cout << "3. Forgot Password\n";
                 cout << "4. Exit\n\n";
-
+                cout << "********************************************************************************************************\n";
                 cout << "Enter your choice: ";
                 cin >> customerChoice;
 
@@ -574,64 +620,89 @@ int main()
                     if (auth.customerLogin())
                     {
                         CustomerCatalog customerCatalog;
-
                         int customerCategory;
-
-                        cout << "Choose a category:\n";
-                        cout << "1. Summer Items\n";
-                        cout << "2. Winter Items\n";
-                        cout << "Enter your choice: ";
-                        cin >> customerCategory;
-
-                        switch (customerCategory)
+                        do
                         {
-                        case 1:
-                            customerCatalog.viewSummerCatalog(catalog);
-                            break;
-                        case 2:
-                            customerCatalog.viewWinterCatalog(catalog);
-                            break;
-                        default:
-                            cout << "Invalid category choice\n";
-                            return 0;
-                        }
-                        int cartAction;
-                        cout << "Choose an action:\n";
-                        cout << "1. Add to Cart\n";
-                        cout << "2. View Cart\n";
-                        cout << "3. Make Payment\n";
-                        cout << "4. Back to Main Menu\n";
-                        cout << "Enter your choice: ";
-                        cin >> cartAction;
-                        string itemName;
-                        CatalogItem item;
-                        switch (cartAction)
-                        {
-                        case 1:
-                            cout << "Enter the item name to add to the cart: ";
-                            cin.ignore();
-                            getline(cin, itemName);
-                            item = findItemInCatalog(itemName, catalog);
-                            if (item.itemName != "")
-                                customerCatalog.addToCart(item);
-                            break;
-                        case 2:
-                            customerCatalog.viewCart();
-                            break;
-                        case 3:
-                            int paymentOption;
-                            cout << "Choose a payment option:\n";
-                            cout << "1. Card\n";
-                            cout << "2. Cash\n";
+                            cout << "********************************************************************************************************\n";
+                            cout << "Choose a category:\n";
+                            cout << "1. Summer Items\n";
+                            cout << "2. Winter Items\n";
+                            cout << "3. Exit\n\n";
+                            cout << "********************************************************************************************************\n";
                             cout << "Enter your choice: ";
-                            cin >> paymentOption;
-                            customerCatalog.makePayment(paymentOption);
-                            break;
-                        case 4:
-                            return 0;
-                        default:
-                            cout << "Invalid choice\n";
+                            cin >> customerCategory;
+
+                            switch (customerCategory)
+                            {
+                            case 1:
+                                customerCatalog.viewSummerCatalog(catalog);
+                                break;
+                            case 2:
+                                customerCatalog.viewWinterCatalog(catalog);
+                                break;
+                            case 3:
+                                return 0;
+                            default:
+                                cout << "Invalid category choice\n";
+                            }
+
+                            int cartAction;
+                            do
+                            {
+                                cout << "********************************************************************************************************\n";
+                                cout << "Choose an action:\n";
+                                cout << "1. Add to Cart\n";
+                                cout << "2. View Cart\n";
+                                cout << "3. Make Payment\n";
+                                cout << "4. Back to Main Menu\n";
+                                cout << "********************************************************************************************************\n";
+                                cout << "Enter your choice: ";
+                                cin >> cartAction;
+                                string itemName;
+                                CatalogItem item;
+
+                                switch (cartAction)
+                                {
+                                case 1:
+                                    do
+                                    {
+                                        cout << "Enter the item name to add to the cart: ";
+                                        cin.ignore();
+                                        getline(cin, itemName);
+                                        item = findItemInCatalog(itemName, catalog);
+                                        if (item.itemName != "")
+                                            customerCatalog.addToCart(item);
+                                        else
+                                            cout << "Item not found in catalog.\n";
+
+                                        cout << "Do you want to add more items to the cart? (1: Yes, 0: No): ";
+                                        cin >> cartAction;
+                                    }
+                                    while (cartAction == 1);
+                                    break;
+                                case 2:
+                                    customerCatalog.viewCart();
+                                    break;
+                                case 3:
+                                    int paymentOption;
+                                    cout << "********************************************************************************************************\n";
+                                    cout << "Choose a payment option:\n";
+                                    cout << "1. Card\n";
+                                    cout << "2. Cash\n";
+                                    cout << "********************************************************************************************************\n";
+                                    cout << "Enter your choice: ";
+                                    cin >> paymentOption;
+                                    customerCatalog.makePayment(paymentOption);
+                                    break;
+                                case 4:
+                                    break;
+                                default:
+                                    cout << "Invalid choice\n";
+                                }
+                            }
+                            while (cartAction != 4);
                         }
+                        while (customerCategory != 3);
                     }
                     break;
                 case 3:
@@ -643,6 +714,7 @@ int main()
                     cout << "Invalid choice\n";
                 }
             }
+            while (customerChoice != 4);
         }
         else if (userType == 2)
         {
@@ -654,7 +726,7 @@ int main()
             }
             adminMenu(auth, catalog);
         }
-        else if (userType==3)
+        else if (userType == 3)
         {
             break;
         }
@@ -665,3 +737,4 @@ int main()
     }
     return 0;
 }
+
