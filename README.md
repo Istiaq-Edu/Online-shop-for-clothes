@@ -2,7 +2,7 @@
 ## :ledger: Features : 
 - -> Account creation - SignUp/Login
 - -> Admin panel navigation 
-- -> Catalog navigation 
+- -> Customer panel catalog navigation 
   - Season: Summer-Winter
       - Category
         - Sizes
