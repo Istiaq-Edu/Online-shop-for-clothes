@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <limits>
 
 using namespace std;
 
@@ -65,7 +66,6 @@ private:
     int numSummerItems = 0;
     int numWinterItems = 0;
 
-
 public:
     void addSummerItem(string itemName, double price, string Size, string code, string color)
     {
@@ -104,7 +104,7 @@ public:
                     summerItems[j] = summerItems[j + 1];
                 }
                 numSummerItems--;
-                cout << code << " removed from the summer catalog.\033[0m\n";
+                cout << code << " \033[92mremoved from the summer catalog.\033[0m\n";
                 return;
             }
         }
@@ -122,7 +122,7 @@ public:
                     winterItems[j] = winterItems[j + 1];
                 }
                 numWinterItems--;
-                cout << code << " removed from the winter catalog.\033[0m\n";
+                cout << code << " \033[92mremoved from the winter catalog.\033[0m\n";
                 return;
             }
         }
@@ -137,7 +137,7 @@ public:
         }
         else
         {
-            cout << "Items in the summer catalog:\033[0m\n\n";
+            cout << "\033[94mItems in the summer catalog:\033[0m\n\n";
             for (int i = 0; i < numSummerItems; ++i)
             {
                 cout << "Code: " << summerItems[i].code<< " | ";
@@ -158,7 +158,7 @@ public:
         }
         else
         {
-            cout << "Items in the winter catalog:\033[0m\n\n";
+            cout << "\033[94mItems in the winter catalog:\033[0m\n\n";
             for (int i = 0; i < numWinterItems; ++i)
             {
                 cout << "Code: " << winterItems[i].code << " | ";
@@ -213,7 +213,6 @@ CatalogItem findItemInCatalog(string itemCode, Catalog& catalog)
     return CatalogItem();
 }
 
-
 class CustomerCatalog
 {
 private:
@@ -242,7 +241,7 @@ public:
             {
                 customerCart[numItemsInCart++] = itemCode;
                 cartTotal += item.price;
-                cout << item.itemName << " added to your cart.\033[0m\n";
+                cout << item.itemName << " \033[92madded to your cart.\033[0m\n";
             }
             else
             {
@@ -262,7 +261,7 @@ public:
         }
         else
         {
-            cout << "Items in your cart:\033[0m\n";
+            cout << "\033[94mItems in your cart:\033[0m\n";
             for (int i = 0; i < numItemsInCart; ++i)
             {
                 CatalogItem item = findItemInCatalog(customerCart[i], catalog);
@@ -284,36 +283,29 @@ public:
             cout << "\033[31mYour cart is empty. Cannot proceed to payment.\033[0m\n";
             return;
         }
-
         switch (paymentOption)
         {
         case 1:
             cout << "\n\033[92mPayment successful! Paid with card.\033[0m\n";
             cout << "\033[38;2;255;128;0m";
-
             cout << "  _____ _                 _           __                    _     _ _   _             \n";
             cout << " |_   _| |__   __ _ _ __ | | _____   / _| ___  _ __  __   _(_)___(_) |_(_)_ __   __ _ \n";
             cout << "   | | | '_ \\ / _` | '_ \\| |/ / __| | |_ / _ \\| '__| \\ \\ / / / __| | __| | '_ \\ / _` |\n";
             cout << "   | | | | | | (_| | | | |   <\\__ \\ |  _| (_) | |     \\ V /| \\__ \\ | |_| | | | | (_| |\n";
             cout << "   |_| |_| |_|\\__,_|_| |_|_|\\_\\___/ |_|  \\___/|_|      \\_/ |_|___/_|\\__|_|_| |_|\\__, |\n";
             cout << "                                                                                 |___/ \n";
-
             cout << "\033[0m";
-
             break;
         case 2:
             cout << "\n\033[92mPayment successful! Paid with cash.\033[0m\n";
             cout << "\033[38;2;255;128;0m";
-
             cout << "  _____ _                 _           __                    _     _ _   _             \n";
             cout << " |_   _| |__   __ _ _ __ | | _____   / _| ___  _ __  __   _(_)___(_) |_(_)_ __   __ _ \n";
             cout << "   | | | '_ \\ / _` | '_ \\| |/ / __| | |_ / _ \\| '__| \\ \\ / / / __| | __| | '_ \\ / _` |\n";
             cout << "   | | | | | | (_| | | | |   <\\__ \\ |  _| (_) | |     \\ V /| \\__ \\ | |_| | | | | (_| |\n";
             cout << "   |_| |_| |_|\\__,_|_| |_|_|\\_\\___/ |_|  \\___/|_|      \\_/ |_|___/_|\\__|_|_| |_|\\__, |\n";
             cout << "                                                                                 |___/ \n";
-
             cout << "\033[0m";
-
             break;
         default:
             cout << "\033[31mInvalid payment option\033[0m\n";
@@ -344,17 +336,24 @@ public:
         if (!admin.isAdminSetFlag())
         {
             cout << "\033[31mAdmin credentials not set.\033[0m\n";
-            cout << "Please set admin credentials first.\033[0m\n";
+            cout << "\033[92mPlease set admin credentials first.\033[0m\n";
             return false;
         }
 
         string adminUsername, adminPassword;
 
         cout << "\033[96mEnter admin username: \033[0m";
-        cin >> adminUsername;
+        getline(cin, adminUsername);
 
         cout << "\033[96mEnter admin password: \033[0m";
-        cin >> adminPassword;
+        getline(cin,adminPassword);
+
+        /////decode
+        for(int i=0; i<adminPassword.length(); i++)
+        {
+            adminPassword[i] += 1;
+        }
+
 
         if (admin.login(adminUsername, adminPassword))
         {
@@ -370,15 +369,22 @@ public:
 
     void setAdminCredentials()
     {
+        cin.ignore();
         if (!admin.isAdminSetFlag())
         {
             string adminUsername, adminPassword;
 
             cout << "\033[96mSet admin username: \033[0m";
-            cin >> adminUsername;
+            getline(cin, adminUsername);
 
             cout << "\033[96mSet admin password: \033[0m";
-            cin >> adminPassword;
+            getline(cin, adminPassword);
+
+            /////////////////encode
+            for(int i=0; i<adminPassword.length(); i++)
+            {
+                adminPassword[i] += 1;
+            }
 
             admin.setAdminCredentials(adminUsername, adminPassword);
             cout << "\033[92mAdmin credentials set successfully!\033[0m\n";
@@ -389,14 +395,13 @@ public:
         }
     }
 
-
-
     void customerSignup()
     {
+        cin.ignore();
         string username, password;
 
         cout << "\033[96mEnter username: \033[0m";
-        cin >> username;
+        getline(cin,username);
 
         bool usernameExists = false;
         for (int i = 0; i < numUsers; i++)
@@ -415,12 +420,17 @@ public:
         }
 
         cout << "\033[96mEnter password: \033[0m";
-        cin >> password;
+        getline(cin, password);
 
         if (password.length() < 1)
         {
             cout << "\033[31mPassword too short!\033[0m\n";
             return;
+        }
+        ////encode
+        for(int i=0; i<password.length(); i++)
+        {
+            password[i] += 1;
         }
 
         users[numUsers][0] = username;
@@ -431,13 +441,20 @@ public:
     }
     bool customerLogin()
     {
+        cin.ignore();
         string username, password;
 
         cout << "\033[96mEnter username: \033[0m";
-        cin >> username;
+        getline(cin, username);
 
         cout << "\033[96mEnter password: \033[0m";
-        cin >> password;
+        getline(cin, password);
+
+        ////decode
+        for(int i=0; i<password.length(); i++)
+        {
+            password[i] += 1;
+        }
 
         bool credentialsValid = false;
         for (int i = 0; i < numUsers; i++)
@@ -445,7 +462,7 @@ public:
             if (users[i][0] == username && users[i][1] == password)
             {
                 credentialsValid = true;
-                cout << "\nWelcome " << username << "!\n";
+                cout << "\n\033[35mWelcome " << username << "!\033[0m\n\n";
                 break;
             }
         }
@@ -460,9 +477,10 @@ public:
 
     void customerForgotPassword()
     {
+        cin.ignore();
         string username;
         cout << "\033[96mEnter your username: \033[0m";
-        cin >> username;
+        getline(cin, username);
 
         bool usernameFound = false;
         for (int i = 0; i < numUsers; i++)
@@ -479,17 +497,16 @@ public:
             cout << "\033[31mUsername not found!\033[0m\n";
             return;
         }
-
         string newPassword;
         cout << "\033[96mEnter new password: \033[0m";
-        cin >> newPassword;
+        getline(cin, newPassword);
 
-        if (newPassword.length() < 8)
+        if (newPassword.length() < 1)
         {
             cout << "\033[31mPassword too short!\033[0m\n";
             return;
         }
-
+///encode
         for (int i = 0; i < newPassword.length(); i++)
         {
             newPassword[i] += 1;
@@ -508,16 +525,14 @@ public:
     }
 };
 
-
-
 void adminMenu(SignupLogin &auth, Catalog &catalog)
 {
     int choice;
 
     while (1)
     {
-        cout << "********************************************************************************************************\n";
-        cout << "\nAdmin Menu:\033[0m\n";
+        cout << "\033[90m**********************************************************************************************************************\033[0m\n";
+        cout << "\n\033[33mAdmin Menu:\033[0m\n";
         cout << "1. View Summer Catalog\n";
         cout << "2. Add Item to Summer Catalog\n";
         cout << "3. Remove Item from Summer Catalog\n";
@@ -526,13 +541,24 @@ void adminMenu(SignupLogin &auth, Catalog &catalog)
         cout << "6. Remove Item from Winter Catalog\n";
         cout << "7. Logout\n";
         cout << "8. Exit\n\n";
-        cout << "********************************************************************************************************\n";
+        cout << "\033[90m**********************************************************************************************************************\033[0m\n";
 
-        cout << "\033[96mEnter your choice: \033[0m";
-        cin >> choice;
+        while (true)
+        {
+            cout << "\033[96mEnter your choice: \033[0m";
+            if (cin >> choice)
+            {
+                break;
+            }
+            else
+            {
+                cout << "\033[31mInvalid input. Please enter a number.\033[0m\n";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+        }
 
         cin.ignore();
-
         switch (choice)
         {
         case 1:
@@ -609,25 +635,25 @@ int main()
     while (true)
     {
         int userType;
-        // Basic colors
-        cout << "\033[30mBlack\033[0m" << endl;   // Black
-        cout << "\033[31mRed\033[0m" << endl;     // Red
-        cout << "\033[32mGreen\033[0m" << endl;   // Green
-        cout << "\033[33mYellow\033[0m" << endl;  // Yellow
-        cout << "\033[34mBlue\033[0m" << endl;    // Blue
-        cout << "\033[35mMagenta\033[0m" << endl; // Magenta
-        cout << "\033[36mCyan\033[0m" << endl;    // Cyan
-        cout << "\033[37mWhite\033[0m" << endl;   // White
-// Bright colors
-        cout << "\033[90mBright Black\033[0m" << endl;   // Bright Black
-        cout << "\033[91mBright Red\033[0m" << endl;     // Bright Red
-        cout << "\033[92mBright Green\033[0m" << endl;   // Bright Green
-        cout << "\033[93mBright Yellow\033[0m" << endl;  // Bright Yellow
-        cout << "\033[94mBright Blue\033[0m" << endl;    // Bright Blue
-        cout << "\033[95mBright Magenta\033[0m" << endl; // Bright Magenta
-        cout << "\033[96mBright Cyan\033[0m" << endl;    // Bright Cyan
-        cout << "\033[97mBright White\033[0m" << endl;   // Bright White
-
+        /*       // Basic colors
+               cout << "\033[30mBlack\033[0m" << endl;   // Black
+               cout << "\033[31mRed\033[0m" << endl;     // Red
+               cout << "\033[32mGreen\033[0m" << endl;   // Green
+               cout << "\033[33mYellow\033[0m" << endl;  // Yellow
+               cout << "\033[34mBlue\033[0m" << endl;    // Blue
+               cout << "\033[35mMagenta\033[0m" << endl; // Magenta
+               cout << "\033[36mCyan\033[0m" << endl;    // Cyan
+               cout << "\033[37mWhite\033[0m" << endl;   // White
+        // Bright colors
+               cout << "\033[90mBright Black\033[0m" << endl;   // Bright Black
+               cout << "\033[91mBright Red\033[0m" << endl;     // Bright Red
+               cout << "\033[92mBright Green\033[0m" << endl;   // Bright Green
+               cout << "\033[93mBright Yellow\033[0m" << endl;  // Bright Yellow
+               cout << "\033[94mBright Blue\033[0m" << endl;    // Bright Blue
+               cout << "\033[95mBright Magenta\033[0m" << endl; // Bright Magenta
+               cout << "\033[96mBright Cyan\033[0m" << endl;    // Bright Cyan
+               cout << "\033[97mBright White\033[0m" << endl;   // Bright White
+        */
         cout << "\033[38;2;255;128;0m";
         cout << " __        __   _                            _          _   _                _                 \n";
         cout << " \\ \\      / /__| | ___ ___  _ __ ___   ___  | |_ ___   | |_| |__   ___   ___| |__   ___  _ __  \n";
@@ -637,28 +663,53 @@ int main()
         cout << "                                                                                        |_|     \n";
         cout << "\033[0m";
         cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-        cout << "Select user type:\033[0m\n";
+        cout << "\033[33mSelect user type:\033[0m\n";
         cout << "1. Customer\n";
         cout << "2. Admin\n";
         cout << "3. Exit\n";
         cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-        cout << "\033[96mEnter your choice: \033[0m";
-        cin >> userType;
+        while (true)
+        {
+            cout << "\033[96mEnter your choice: \033[0m";
+            if (cin >> userType)
+            {
+                break;
+            }
+            else
+            {
+                cout << "\033[31mInvalid input. Please enter a valid choise.\033[0m\n";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+        }
 
         if (userType == 1)
         {
             int customerChoice;
+
             do
             {
                 cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                cout << "\nCustomer Menu:\033[0m\n";
+                cout << "\n\033[33mCustomer Menu:\033[0m\n";
                 cout << "1. Signup\n";
                 cout << "2. Login\n";
                 cout << "3. Forgot Password\n";
                 cout << "4. Exit\n\n";
                 cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                cout << "\033[96mEnter your choice: \033[0m";
-                cin >> customerChoice;
+                while (true)
+                {
+                    cout << "\033[96mEnter your choice: \033[0m";
+                    if (cin >> customerChoice)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        cout << "\033[31mInvalid input. Please enter a number.\033[0m\n";
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    }
+                }
 
                 switch (customerChoice)
                 {
@@ -673,13 +724,25 @@ int main()
                         do
                         {
                             cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                            cout << "Choose a category:\033[0m\n";
+                            cout << "\033[33mChoose a category:\033[0m\n";
                             cout << "1. Summer Items\n";
                             cout << "2. Winter Items\n";
                             cout << "3. Exit\n\n";
                             cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                            cout << "\033[96mEnter your choice: \033[0m";
-                            cin >> customerCategory;
+                            while (true)
+                            {
+                                cout << "\033[96mEnter your choice: \033[0m";
+                                if (cin >> customerCategory)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    cout << "\033[31mInvalid input. Please enter a number.\033[0m\n";
+                                    cin.clear();
+                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                }
+                            }
 
                             switch (customerCategory)
                             {
@@ -699,15 +762,27 @@ int main()
                             do
                             {
                                 cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                                cout << "Choose an action:\033[0m\n";
+                                cout << "\033[33mChoose an action:\033[0m\n";
                                 cout << "1. Add to Cart\n";
                                 cout << "2. View Cart\n";
                                 cout << "3. Make Payment\n";
                                 cout << "4. Back to Main Menu\n";
                                 cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                                cout << "\033[96mEnter your choice: \033[0m";
-                                cin >> cartAction;
-
+                                while (true)
+                                {
+                                    cout << "\033[96mEnter your choice: \033[0m";
+                                    if (cin >> cartAction)
+                                    {
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        cout << "\033[31mInvalid input. Please enter a number.\033[0m\n";
+                                        cin.clear();
+                                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                    }
+                                }
+                                
                                 CatalogItem item;
 
                                 switch (cartAction)
@@ -725,7 +800,7 @@ int main()
                                         else
                                             cout << "\033[31mItem not found in catalog.\033[0m\n";
 
-                                        cout << "\033[96mDo you want to add more items to the cart? (1: Yes, 0: No): \033[0m";
+                                        cout << "\033[93mDo you want to add more items to the cart? (1: Yes, 0: No): \033[0m";
                                         cin >> cartAction;
                                     }
                                     while (cartAction == 1);
@@ -736,12 +811,25 @@ int main()
                                 case 3:
                                     int paymentOption;
                                     cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                                    cout << "Choose a payment option:\033[0m\n";
+                                    cout << "\033[33mChoose a payment option:\033[0m\n";
                                     cout << "1. Card\n";
                                     cout << "2. Cash\n";
                                     cout << "\033[90m**********************************************************************************************************************\033[0m\n";
-                                    cout << "\033[96mEnter your choice: \033[0m";
-                                    cin >> paymentOption;
+                                    while (true)
+                                    {
+                                        cout << "\033[96mEnter your choice: \033[0m";
+                                        if (cin >> paymentOption)
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            cout << "\033[31mInvalid input. Please enter a number.\033[0m\n";
+                                            cin.clear();
+                                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                        }
+                                    }
+
                                     customerCatalog.makePayment(paymentOption);
                                     break;
                                 case 4:
@@ -787,4 +875,3 @@ int main()
     }
     return 0;
 }
-
